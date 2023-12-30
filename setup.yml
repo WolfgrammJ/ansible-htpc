@@ -1,0 +1,20 @@
+- hosts: localhost
+  become: true
+  pre_tasks:
+    - name: update repositories
+      apt:
+        update_cache: yes
+        allow_unauthenticated: yes
+      changed_when: false
+      when: ansible_distribution == 'Ubuntu'
+
+  tasks:
+    - include_tasks: tasks/w_packages.yml
+    - include_tasks: tasks/w_domainJoinScript.yml
+    - include_tasks: tasks/w_users.yml
+      #when: ansible_distribution == 'Ubuntu'
+    - include_tasks: tasks/w_cron.yml
+      #when: ansible_distribution == 'Ubuntu'
+    - include_tasks: tasks/w_sudoers.yml
+    - include_tasks: tasks/w_autofs.yml
+    - include_tasks: tasks/w_hostnameSetup.yml
