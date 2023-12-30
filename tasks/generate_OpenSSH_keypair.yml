@@ -1,3 +1,9 @@
+- name: Create ".ssh"-directory if it does not exist
+  ansible.builtin.file:
+    path: /home/media/.ssh
+    state: directory
+    mode: '0755'
+
 - name: Generate OpenSSH keypair
   community.crypto.openssh_keypair:
     path: /home/media/.ssh/id_ed25519
