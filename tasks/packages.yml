@@ -31,6 +31,7 @@
       - ncdu
       - vlc
       - kodi
+      - gnupg2
 
     state: latest
 
