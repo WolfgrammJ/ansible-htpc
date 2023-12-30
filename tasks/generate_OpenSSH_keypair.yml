@@ -2,6 +2,8 @@
   ansible.builtin.file:
     path: /home/media/.ssh
     state: directory
+    owner: media
+    group: media
     mode: '0755'
 
 - name: Generate OpenSSH keypair
