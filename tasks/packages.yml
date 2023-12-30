@@ -1,0 +1,158 @@
+
+
+###############################################################
+# Package Installation from Repos
+###############################################################
+- name: Install packages
+  ansible.builtin.package:
+    name:
+      - htop
+      - mc
+      - neofetch
+      - tmux
+      - zsh
+      - default-jre
+      - smbclient
+      - dolphin-nextcloud
+      - dolphin-plugins
+      - terminator
+      - cifs-utils
+      - nfs-common
+      - kwrite
+      - autofs
+      - curl
+      - piper #for mouse configuration
+      - filezilla
+      - python3
+      - krename
+      - kdiff3
+      - kdiff3-doc
+      - chromium-browser
+      - ncdu
+      - vlc
+      - kodi
+
+    state: latest
+
+
+###############################################################
+# Install Brave browser (Ubuntu)
+# Needs to run after curl is installed
+###############################################################
+- name: Add PGP key and repository for Brave (Ubuntu)
+  become: yes
+  raw: |
+    curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+
+- name: Update repositories cache (Ubuntu)
+  apt:
+    update_cache: yes
+    allow_unauthenticated: yes
+
+- name: Install Brave package
+  ansible.builtin.package:
+    name:
+      - brave-browser
+    state: latest
+
+
+###############################################################
+# Install Firefox browser (apt) (Ubuntu)
+###############################################################
+- name: Add Firefox repository into sources list
+  ansible.builtin.apt_repository:
+    repo: ppa:mozillateam/ppa
+    state: present
+
+- name: Set priority for firefox ppa
+  become: yes
+  raw: |
+    echo '
+    Package: *
+    Pin: release o=LP-PPA-mozillateam
+    Pin-Priority: 1001
+    ' | sudo tee /etc/apt/preferences.d/mozilla-firefox
+
+- name: Update firefox automatically
+  become: yes
+  raw: |
+    echo 'Unattended-Upgrade::Allowed-Origins:: "LP-PPA-mozillateam:${distro_codename}";' | sudo tee /etc/apt/apt.conf.d/51unattended-upgrades-firefox
+
+- name: Update repositories cache (Ubuntu)
+  apt:
+    update_cache: yes
+    allow_unauthenticated: yes
+
+- name: Install firefox package
+  ansible.builtin.package:
+    name:
+      - firefox
+    state: latest
+
+###############################################################
+# Syncthing preparation (Ubuntu)
+# Needs to run after curl is installed
+###############################################################
+- name: Add PGP key and repository for syncthing (Ubuntu)
+  become: yes
+  raw: |
+    curl -o /usr/share/keyrings/syncthing-archive-keyring.gpg https://syncthing.net/release-key.gpg
+    echo "deb [signed-by=/usr/share/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
+
+- name: Update repositories cache (Ubuntu)
+  apt:
+    update_cache: yes
+    allow_unauthenticated: yes
+
+
+###############################################################
+# Syncthing Installation (Ubuntu)
+# Needs to run after curl is installed
+###############################################################
+- name: Install Syncthing
+  ansible.builtin.package:
+    name:
+      - syncthing
+    state: latest
+
+##################################################
+# Syncthing: Set up system service
+# Currently deactivated because syncthing will be set up manually per user ("systemctl --user enable syncthing.service")
+##################################################
+#- name: Enabling syncthing service
+#  become: yes
+#  ansible.builtin.systemd:
+#    daemon_reload: yes
+#    state: restarted
+#    enabled: yes
+#    name: syncthing@ansible.service
+#  ignore_errors: yes
+
+#- name: Start syncthing service explicitly
+#  become: yes
+#  ansible.builtin.systemd:
+#    state: started
+#    name: syncthing@ansible.service
+#  ignore_errors: yes
+
+
+###############################################################
+# Install additional software
+###############################################################
+
+
+
+### TeamViewer (Ubuntu)
+- name: Install TeamViewer (Ubuntu)
+  become: yes
+  apt:
+    deb: https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
+
+### Vivaldi Browser
+- name: Install Vivaldi Browser
+  become: yes
+  apt:
+    deb: https://downloads.vivaldi.com/stable/vivaldi-stable_6.4.3160.34-1_amd64.deb
+  ignore_errors: yes
+

@@ -1,0 +1,6 @@
+- name: install cron job (ansible-pull)
+  ansible.builtin.cron:
+    name: "ansible-htpc"
+    user: "ansible"
+    minute: "10"
+    job: "sudo /usr/bin/ansible-pull -o -U https://github.com/WolfgrammJ/ansible-htpc.git setup.yml --checkout main > /dev/null"
