@@ -1,0 +1,6 @@
+- name: Generate OpenSSH keypair
+  community.crypto.openssh_keypair:
+    path: /home/media/.ssh/id_ed25519
+    type: ed25519
+    owner: media
+    group: media
